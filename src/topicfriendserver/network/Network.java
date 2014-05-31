@@ -1,6 +1,7 @@
 package topicfriendserver.network;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -14,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import org.apache.http.impl.io.SocketInputBuffer;
 import org.apache.http.util.ByteArrayBuffer;
 
 public class Network 
@@ -40,11 +42,14 @@ public class Network
 	public static void initNetwork(int minThreadCount,int maxThreadCount,int waitingConectionsMaxSiz)
 	{
 		NetworkWorkerPool.initNetworkWorkerPool(minThreadCount, maxThreadCount);
-		s_waitingConnections=new HashSet<Integer>();
-		s_waitingConectionsMaxSize=waitingConectionsMaxSiz;
 		
 		s_connectionSocketMap=new HashMap<Integer,Socket>();
 		s_lastConnectionID=NULL_CONNECTION;
+		
+		s_connections=new ArrayList<Integer>();
+		
+		s_waitingConnections=new HashSet<Integer>();
+		s_waitingConectionsMaxSize=waitingConectionsMaxSiz;
 		
 		s_badConnections=new HashSet<Integer>();
 		
@@ -168,9 +173,7 @@ public class Network
 	
 	public static int connectHostPort(String host,int port,int timeout) throws IOException
 	{
-		InetSocketAddress address=new InetSocketAddress(host, port);
-		Socket socket=new Socket();
-		socket.connect(address, timeout);
+		Socket socket=new Socket(host,port);
 		
 		OutputStream outputStream = socket.getOutputStream();
 		byte[] handshakeByte=new byte[4];
@@ -221,11 +224,20 @@ public class Network
 	
 	
 	//may be change to get all bad connections at once
-	public static HashSet<Integer> getBadConnectionSet()
+	public static int getBadConnectionWithoutRemove()
 	{
-		updateBadConnectionSet();
+		if(s_badConnections.size()>0)
+		{
+			return s_badConnections.iterator().next();
+		}
 		
-		return s_badConnections;
+		updateBadConnectionSet();
+		if(s_badConnections.size()>0)
+		{
+			return s_badConnections.iterator().next();
+		}
+		
+		return NULL_CONNECTION;
 	}
 	
 	public static void makeBadConnection(int connection)
@@ -244,7 +256,9 @@ public class Network
 			Socket socket=getSocketByConnection(connection);
 			try 
 			{
-				if(socket.getInputStream().available()>=4)
+				InputStream inputStream = socket.getInputStream();
+				int available=inputStream.available();
+				if(available>=4)
 				{
 					iter.remove();
 					NetworkWorkerPool.queueRecieveData(socket);
@@ -290,6 +304,12 @@ public class Network
 		//add the connection back to waiting queue
 		s_waitingConnections.add(recvConnection);
 		
+		//NOTICE:
+		//receive a empty packet,just ignore it
+		if(buf.length()<=0)
+		{
+			return NULL_CONNECTION;
+		}
 		return recvConnection;
 	}
 	
@@ -457,15 +477,14 @@ public class Network
 		//remove from bad connection
 		s_badConnections.remove(connection);
 		
-		//close the socket
+		//close the socket here instead of in network worker pool
 		Socket socket=getSocketByConnection(connection);
 		closeSocket(socket);
 		//remove from connection and socket map
 		s_connectionSocketMap.remove(connection);
 		
 		//remove from network worker pool
-		NetworkWorkerPool.removePendingReceiveSocket(socket);
-		NetworkWorkerPool.removeBadSocket(socket);
+		NetworkWorkerPool.removeReceiveSocket(socket);
 	}
 	
 	private static void updateBadConnectionSet()

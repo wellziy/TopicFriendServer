@@ -10,7 +10,7 @@ public class TopicFriendServer
 {
 	public static void main(String[] args)
 	{
-		Network.initNetwork(1, 5, 10000);
+		Network.initNetwork(4, 4, 10000);
 		try
 		{
 			Network.startServer(55555, 1000);
@@ -23,7 +23,7 @@ public class TopicFriendServer
 				int newConnection=Network.acceptConnection();
 				if(newConnection!=Network.NULL_CONNECTION)
 				{
-					System.out.println("accpet a new connection");
+					System.out.println("accept a new connection");
 					System.out.println("current connections: "+Network.getConnectionCount());
 				}
 				
@@ -37,9 +37,9 @@ public class TopicFriendServer
 				}
 				
 				nowPing=System.currentTimeMillis();
-				if(nowPing-lastPing>1000)
+				if(nowPing-lastPing>1)
 				{
-					Network.pingWaitingConnections();
+					Network.pingFrontWaitingConnection();
 					lastPing=nowPing;
 				}
 				//deal with bad sockets

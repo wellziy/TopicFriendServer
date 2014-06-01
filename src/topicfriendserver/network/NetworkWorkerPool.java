@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,7 +61,7 @@ public class NetworkWorkerPool
 						synchronized (s_waitingThreadCount) 
 						{
 							//remove thread if there more thread are waiting for work
-							if(s_waitingThreadCount>=s_minThreadCount)
+							if(s_waitingThreadCount>0&&s_threads.size()>s_minThreadCount)
 							{
 								Iterator<Thread> iter = s_threads.iterator();
 								Thread th=iter.next();
@@ -161,15 +160,11 @@ public class NetworkWorkerPool
 					boolean isSendOK=sendNetworkBuffer(sendBuffer);
 					if(!isSendOK)
 					{
-//						synchronized(s_receiveSockets)
-//						{
-							synchronized(s_badSockets)
-							{
-								//here just added it to bad sockets or the thread will enter dead lock state
-								removeReceiveSocket(sendBuffer.socket);
-								s_badSockets.add(sendBuffer.socket);
-							}
-//						}
+						synchronized(s_badSockets)
+						{
+							removeReceiveSocket(sendBuffer.socket);
+							s_badSockets.add(sendBuffer.socket);
+						}
 					}
 				}
 				else
@@ -179,15 +174,11 @@ public class NetworkWorkerPool
 					if(buf==null)
 					{
 						//error happened when received from the socket
-//						synchronized(s_receiveSockets)
-//						{
-							synchronized(s_badSockets)
-							{
-								//here just added it to bad sockets or the thread will enter dead lock state
-								removeReceiveSocket(recvSocket);
-								s_badSockets.add(recvSocket);
-							}
-//						}
+						synchronized(s_badSockets)
+						{
+							removeReceiveSocket(recvSocket);
+							s_badSockets.add(recvSocket);
+						}
 					}
 					else
 					{

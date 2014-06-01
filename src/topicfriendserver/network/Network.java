@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.Vector;
 
@@ -28,6 +30,8 @@ public class Network
 	private static int s_lastConnectionID;
 	private static ArrayList<Integer> s_connections;
 	private static HashSet<Integer> s_waitingConnections;
+	//s_waitingPings contains all connections the same as s_waitingConnections,but with a different data structure
+	private static LinkedList<Integer> s_waitingPings;
 	private static int s_waitingConectionsMaxSize;
 	private static HashSet<Integer> s_badConnections;
 	
@@ -50,6 +54,7 @@ public class Network
 		
 		s_waitingConnections=new HashSet<Integer>();
 		s_waitingConectionsMaxSize=waitingConectionsMaxSiz;
+		s_waitingPings=new LinkedList<Integer>();
 		
 		s_badConnections=new HashSet<Integer>();
 		
@@ -158,6 +163,7 @@ public class Network
 		NetworkWorkerPool.destroyNetworkWorkerPool();
 		s_connectionSocketMap.clear();
 		s_waitingConnections.clear();
+		s_waitingPings.clear();
 		s_badConnections.clear();
 	}
 	
@@ -189,6 +195,8 @@ public class Network
 		
 		//add to waiting connection
 		s_waitingConnections.add(connection);
+		s_waitingPings.addLast(connection);
+		
 		//add to connections
 		s_connections.add(connection);
 		
@@ -245,14 +253,18 @@ public class Network
 		s_badConnections.add(connection);
 	}
 	
-	public static void pingWaitingConnections()
+	//@notice do not ping the waiting queue too much,since it will make the send buffer full of ping packets,and make the server slow down too much
+	//TODO: change not to ping all waiting connections all together,just ping them at different time
+	public static void pingFrontWaitingConnection()
 	{
-		Iterator<Integer> iter = s_waitingConnections.iterator();
-		while(iter.hasNext())
+		ListIterator<Integer> iter = s_waitingPings.listIterator();
+		if(iter.hasNext())
 		{
 			int connection=iter.next();
 			Socket socket=getSocketByConnection(connection);
 			NetworkWorkerPool.queueData(socket, new ByteArrayBuffer(1));
+			iter.remove();
+			s_waitingPings.addLast(connection);
 		}
 	}
 	
@@ -273,6 +285,7 @@ public class Network
 				if(available>=4)
 				{
 					iter.remove();
+					s_waitingPings.remove(new Integer(connection));
 					NetworkWorkerPool.queueRecieveData(socket);
 					continue;
 				}
@@ -283,6 +296,7 @@ public class Network
 				//add to the bad connection set
 				s_badConnections.add(connection);
 				iter.remove();
+				s_waitingPings.add(connection);
 			}
 		}
 		
@@ -315,6 +329,7 @@ public class Network
 		assert(recvConnection!=NULL_CONNECTION);
 		//add the connection back to waiting queue
 		s_waitingConnections.add(recvConnection);
+		s_waitingPings.addLast(recvConnection);
 		
 		//NOTICE:
 		//receive a empty packet,just ignore it
@@ -404,6 +419,7 @@ public class Network
 	private static void removeWaitingConnection(int connection)
 	{
 		s_waitingConnections.remove(connection);
+		s_waitingPings.remove(new Integer(connection));
 	}
 	
 	private static int acceptHankshakeSocket()
@@ -461,6 +477,7 @@ public class Network
 		//create connection
 		int connection=createConnection(socket);
 		s_waitingConnections.add(connection);
+		s_waitingPings.addLast(connection);
 		s_connections.add(connection);
 		
 		return connection;

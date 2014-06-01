@@ -14,6 +14,9 @@ public class TopicFriendServer
 		try
 		{
 			Network.startServer(55555, 1000);
+			long lastPing=System.currentTimeMillis();
+			long nowPing;
+			
 			while(true)
 			{
 				//deal with new connection
@@ -27,13 +30,18 @@ public class TopicFriendServer
 				//deal with receive data
 				ByteArrayBuffer buf=new ByteArrayBuffer(100);
 				int connection=Network.receiveData(buf,Network.NULL_CONNECTION);
-				if(connection==Network.NULL_CONNECTION)
+				if(connection!=Network.NULL_CONNECTION)
 				{
-					continue;
+					String str=new String(buf.buffer());
+					System.out.println("connection "+connection+" say:"+str);
 				}
-				String str=new String(buf.buffer());
-				System.out.println("connection "+connection+" say:"+str);
 				
+				nowPing=System.currentTimeMillis();
+				if(nowPing-lastPing>1000)
+				{
+					Network.pingWaitingConnections();
+					lastPing=nowPing;
+				}
 				//deal with bad sockets
 				while(true)
 				{

@@ -242,7 +242,18 @@ public class Network
 	
 	public static void makeBadConnection(int connection)
 	{
-		
+		s_badConnections.add(connection);
+	}
+	
+	public static void pingWaitingConnections()
+	{
+		Iterator<Integer> iter = s_waitingConnections.iterator();
+		while(iter.hasNext())
+		{
+			int connection=iter.next();
+			Socket socket=getSocketByConnection(connection);
+			NetworkWorkerPool.queueData(socket, new ByteArrayBuffer(1));
+		}
 	}
 	
 	//recvConnection == NULL_CONNECTION means receive the first socket which has data received
@@ -253,6 +264,7 @@ public class Network
 		while(iter.hasNext())
 		{
 			int connection=iter.next();
+			//TODO:check the return socket may be null???
 			Socket socket=getSocketByConnection(connection);
 			try 
 			{
@@ -391,11 +403,7 @@ public class Network
 	
 	private static void removeWaitingConnection(int connection)
 	{
-		Socket socket=getSocketByConnection(connection);
-		if(socket!=null)
-		{
-			s_waitingConnections.remove(socket);
-		}
+		s_waitingConnections.remove(connection);
 	}
 	
 	private static int acceptHankshakeSocket()
@@ -497,8 +505,11 @@ public class Network
 			{
 				Socket socket=iter.next();
 				int connection=getConnectionBySocket(socket);
-				assert(connection!=NULL_CONNECTION);
-				s_badConnections.add(connection);
+				//the connection may be null if it is added to the bad socket set multiple times
+				if(connection!=NULL_CONNECTION)
+				{
+					s_badConnections.add(connection);
+				}
 			}
 			badSocketSet.clear();
 		}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -153,21 +154,22 @@ public class NetworkWorkerPool
 				}
 				
 				//do the job found
-				System.out.println("the thread "+Thread.currentThread().getId()+" fond a job");
+				System.out.println("the thread "+Thread.currentThread().getId()+" found a job");
 				if(sendBuffer!=null)
 				{
 					//send the buffer to socket
 					boolean isSendOK=sendNetworkBuffer(sendBuffer);
 					if(!isSendOK)
 					{
-						synchronized(s_receiveSockets)
-						{
+//						synchronized(s_receiveSockets)
+//						{
 							synchronized(s_badSockets)
 							{
+								//here just added it to bad sockets or the thread will enter dead lock state
 								removeReceiveSocket(sendBuffer.socket);
 								s_badSockets.add(sendBuffer.socket);
 							}
-						}
+//						}
 					}
 				}
 				else
@@ -177,14 +179,15 @@ public class NetworkWorkerPool
 					if(buf==null)
 					{
 						//error happened when received from the socket
-						synchronized(s_receiveSockets)
-						{
+//						synchronized(s_receiveSockets)
+//						{
 							synchronized(s_badSockets)
 							{
+								//here just added it to bad sockets or the thread will enter dead lock state
 								removeReceiveSocket(recvSocket);
 								s_badSockets.add(recvSocket);
 							}
-						}
+//						}
 					}
 					else
 					{
@@ -195,6 +198,7 @@ public class NetworkWorkerPool
 						}
 					}
 				}
+				System.out.println("the thread "+Thread.currentThread().getId()+" finished a job");
 			}
 			//end of function run
 		}

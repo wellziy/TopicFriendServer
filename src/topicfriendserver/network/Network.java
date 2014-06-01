@@ -43,7 +43,7 @@ public class Network
 	private static boolean s_isServerActive;
 	
 	//public interfaces
-	public static void initNetwork(int minThreadCount,int maxThreadCount,int waitingConectionsMaxSiz)
+	public static synchronized void initNetwork(int minThreadCount,int maxThreadCount,int waitingConectionsMaxSiz)
 	{
 		NetworkWorkerPool.initNetworkWorkerPool(minThreadCount, maxThreadCount);
 		
@@ -61,7 +61,7 @@ public class Network
 		s_serverSocket=null;
 	}
 	
-	public static void startServer(int port,int handshakeSocketsMaxSize) throws IOException
+	public static synchronized void startServer(int port,int handshakeSocketsMaxSize) throws IOException
 	{
 		assert(isServerRunning()==false);
 		
@@ -117,7 +117,7 @@ public class Network
 		s_acceptThread.start();
 	}
 	
-	public static void stopServer()
+	public static synchronized void stopServer()
 	{
 		assert(isServerRunning());
 		//must set s_isServerActive to false before stop the thread
@@ -144,7 +144,7 @@ public class Network
 		s_serverSocket=null;
 	}
 	
-	public static void destroyNetwork()
+	public static synchronized void destroyNetwork()
 	{
 		if(isServerRunning())
 		{
@@ -167,17 +167,17 @@ public class Network
 		s_badConnections.clear();
 	}
 	
-	public static int getConnectionCount()
+	public static synchronized int getConnectionCount()
 	{
 		return s_connections.size();
 	}
 	
-	public static boolean isServerRunning()
+	public static synchronized boolean isServerRunning()
 	{
 		return s_serverSocket!=null&&s_isServerActive==true;
 	}
 	
-	public static int connectHostPort(String host,int port,int timeout) throws IOException
+	public static synchronized int connectHostPort(String host,int port,int timeout) throws IOException
 	{
 		Socket socket=new Socket(host,port);
 		
@@ -203,7 +203,7 @@ public class Network
 		return connection;
 	}
 	
-	public static int acceptConnection()
+	public static synchronized int acceptConnection()
 	{
 		assert(isServerRunning());
 		
@@ -213,7 +213,7 @@ public class Network
 	}
 	
 	//disconnect a connection,remove all thing about it
-	public static boolean disconnect(int connection)
+	public static synchronized boolean disconnect(int connection)
 	{
 		//remove from connections
 		Iterator<Integer> iter = s_connections.iterator();
@@ -232,7 +232,7 @@ public class Network
 	
 	
 	//may be change to get all bad connections at once
-	public static int getBadConnectionWithoutRemove()
+	public static synchronized int getBadConnectionWithoutRemove()
 	{
 		if(s_badConnections.size()>0)
 		{
@@ -248,14 +248,14 @@ public class Network
 		return NULL_CONNECTION;
 	}
 	
-	public static void makeBadConnection(int connection)
+	public static synchronized void makeBadConnection(int connection)
 	{
 		s_badConnections.add(connection);
 	}
 	
 	//@notice do not ping the waiting queue too much,since it will make the send buffer full of ping packets,and make the server slow down too much
 	//TODO: change not to ping all waiting connections all together,just ping them at different time
-	public static void pingFrontWaitingConnection()
+	public static synchronized void pingFrontWaitingConnection()
 	{
 		ListIterator<Integer> iter = s_waitingPings.listIterator();
 		if(iter.hasNext())
@@ -269,7 +269,7 @@ public class Network
 	}
 	
 	//recvConnection == NULL_CONNECTION means receive the first socket which has data received
-	public static int receiveData(ByteArrayBuffer buf,int recvConnection)
+	public static synchronized int receiveData(ByteArrayBuffer buf,int recvConnection)
 	{
 		//check wating queue
 		Iterator<Integer> iter = s_waitingConnections.iterator();
@@ -340,7 +340,7 @@ public class Network
 		return recvConnection;
 	}
 	
-	public static void sendDataOne(ByteArrayBuffer buf,int connection)
+	public static synchronized void sendDataOne(ByteArrayBuffer buf,int connection)
 	{
 		Socket socket=getSocketByConnection(connection);
 		assert(socket!=null);
@@ -355,7 +355,7 @@ public class Network
 		NetworkWorkerPool.queueData(socket, buf);
 	}
 	
-	public static void sendDataAllExcept(ByteArrayBuffer buf,int connection)
+	public static synchronized void sendDataAllExcept(ByteArrayBuffer buf,int connection)
 	{
 		Iterator<Integer> iter = s_connections.iterator();
 		while(iter.hasNext())
@@ -369,7 +369,7 @@ public class Network
 		}
 	}
 	
-	public static void sendDataMany(ByteArrayBuffer buf,Vector<Integer> connections)
+	public static synchronized void sendDataMany(ByteArrayBuffer buf,Vector<Integer> connections)
 	{
 		Iterator<Integer> iter = connections.iterator();
 		while(iter.hasNext())
@@ -379,6 +379,7 @@ public class Network
 		}
 	}
 	
+	///////////////////////////////////////////////////////////////////////////
 	//private methods
 	private static int createConnection(Socket socket)
 	{

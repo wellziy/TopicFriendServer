@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import topicfriend.netmessage.NetMessage;
+import topicfriend.network.Network;
 
 public class NetMessageHandler
 {
@@ -26,7 +27,8 @@ public class NetMessageHandler
 	
 	public void handleMessage(int connection,NetMessage msg)
 	{
-		
+		//TDOO: handle all the message here,but now it just echo the message back to the client
+		Network.sendDataOne(msg.toByteArrayBuffer(),connection);
 	}
 	
 	public void handleNewConnection(int connection)

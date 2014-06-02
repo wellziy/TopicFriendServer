@@ -59,7 +59,7 @@ public class TopicFriendServer
 				
 				//deal with ping
 				nowPing=System.currentTimeMillis();
-				if(nowPing-lastPing>1)
+				if(nowPing-lastPing>100)
 				{
 					Network.pingFrontWaitingConnection();
 					lastPing=nowPing;

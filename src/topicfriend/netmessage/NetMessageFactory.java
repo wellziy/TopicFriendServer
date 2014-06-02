@@ -15,6 +15,7 @@ public class NetMessageFactory
 		NetMessageFactory f=NetMessageFactory.getInstance();
 		f.addNetMessageClass(NetMessageID.LOGIN, NetMessageLogin.class);
 		f.addNetMessageClass(NetMessageID.ERROR, NetMessageError.class);
+		f.addNetMessageClass(NetMessageID.RIGISTER, NetMessageRigister.class);
 	}
 	
 	//public interfaces

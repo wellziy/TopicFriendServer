@@ -13,17 +13,17 @@ public class MessageTable
 	//target uid
 	public static final String KEY_TID="tid";
 	//timestamp of the message
-	public static final String KEY_TIMESTAMP="timestamp";
+	public static final String KEY_TIMESTAMP="ts";
 	//content of the message
 	public static final String KEY_CONTENT="content";
 	
 	//@return all unread message for user with uid,and then remove them from database
-	public void getUnreadMessage(int uid)
+	public static void getUnreadMessage(int uid)
 	{
 		//TODO:
 	}
 	
-	public void putUnreadMessage(int sid,int tid,Date timestamp,String content)
+	public static void putUnreadMessage(int sid,int tid,Date timestamp,String content)
 	{
 		//TODO:
 	}

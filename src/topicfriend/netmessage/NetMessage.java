@@ -1,11 +1,14 @@
 package topicfriend.netmessage;
 
+import java.io.StringReader;
+
 import org.apache.http.util.ByteArrayBuffer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
 public class NetMessage
 {
@@ -25,20 +28,38 @@ public class NetMessage
 	
 	public static NetMessage fromJsonString(String str)
 	{
-		JsonParser parser=new JsonParser();
-		JsonObject obj=parser.parse(str).getAsJsonObject();
-		JsonElement idElement=(obj==null?null:obj.get("m_id"));
-		if(idElement==null)
+		try
 		{
-			return null;
+			StringReader strReader=new StringReader(str);
+			JsonReader jsReader=new JsonReader(strReader);
+			jsReader.setLenient(true);
+			JsonParser parser=new JsonParser();
+			JsonElement ele=parser.parse(jsReader);
+			if(ele.isJsonObject()==false)
+			{
+				return null;
+			}
+			
+			JsonObject obj=ele.getAsJsonObject();
+			JsonElement idElement=obj.get("m_id");
+			if(idElement==null)
+			{
+				return null;
+			}
+			
+			int id=idElement.getAsInt();
+			Gson gs=new Gson();
+			Class<? extends NetMessage> messageClass = NetMessageFactory.getInstance().getMessageClass(id);
+			NetMessage res=gs.fromJson(obj, messageClass);
+			
+			return res;
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
 		}
 		
-		int id=idElement.getAsInt();
-		Gson gs=new Gson();
-		Class<? extends NetMessage> messageClass = NetMessageFactory.getInstance().getMessageClass(id);
-		NetMessage res=gs.fromJson(obj, messageClass);
-		
-		return res;
+		return null;
 	}
 	
 	public String toJsonString()

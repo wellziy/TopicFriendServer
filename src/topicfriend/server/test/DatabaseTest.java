@@ -1,26 +1,20 @@
 package topicfriend.server.test;
 
+import topicfriend.server.database.FriendTable;
 import topicfriend.server.database.TopicFriendDB;
 import junit.framework.TestCase;
 
 public class DatabaseTest extends TestCase
 {
-	@Override
-	protected void setUp() throws Exception 
-	{
-		super.setUp();
-	}
-	
-	@Override
-	protected void tearDown() throws Exception 
-	{
-		super.tearDown();
-	}
-	
 	public void testInstance()
 	{
 		TopicFriendDB ins=TopicFriendDB.getInstance();
 		assertNotNull(ins);
-		TopicFriendDB.getInstance().shutdownDB();
+	}
+	
+	public void testFriendTable()
+	{
+		boolean res=FriendTable.makeFriend(100, 200);
+		assertTrue(res==true);
 	}
 }

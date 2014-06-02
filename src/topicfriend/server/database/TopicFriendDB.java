@@ -34,7 +34,7 @@ public class TopicFriendDB
 		return s_instance;
 	}
 	
-	//do not close the connection,and remember commit your change at the of operations
+	//do not close and change the setting of the connection,remember to commit when finish execute all sql statements
 	public Connection getConnection()
 	{
 		return m_dbConnection;
@@ -53,12 +53,13 @@ public class TopicFriendDB
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
 		//create database with name 'topicfriend'
 		m_dbConnection=DriverManager.getConnection("jdbc:derby:"+DB_NAME);
-		//set auto commit to false,so remember commit yourself
+		//set auto commit to false
 		m_dbConnection.setAutoCommit(false);
 		
 		System.out.println("initDB succeed!");
 	}
 	
+	//do not shutdown the db until you exit the application
 	public void shutdownDB()
 	{
 		System.out.println("shutdownDB...");

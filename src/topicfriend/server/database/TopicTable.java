@@ -10,7 +10,7 @@ public class TopicTable
 	public static final String KEY_DESCRIPTION="description";
 	
 	//@return all topic information
-	public void getAllTopicInformation()
+	public static void getAllTopicInformation()
 	{
 		//TODO:
 	}

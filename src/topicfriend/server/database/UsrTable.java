@@ -1,7 +1,7 @@
 package topicfriend.server.database;
 
 //class for operate the table 'user' in database
-public class UserTable
+public class UsrTable
 {
 	//user id
 	public static final String KEY_ID="id";
@@ -17,21 +17,21 @@ public class UserTable
 	public static final String KEY_ICON="icon";
 	
 	//@return the user name existed or not
-	public boolean isUserNameExisted(String name)
+	public static boolean isUserNameExisted(String name)
 	{
 		//TODO:
 		return false;
 	}
 	
 	//@return the uid of the created user
-	public int createUser(String name,String password,String signature,String icon)
+	public static int createUser(String name,String password,String signature,String icon)
 	{
 		//TODO:
 		return 0;
 	}
 	
 	//@return the name,sig,icon information for user with uid
-	public void getUserInformation(int uid)
+	public static void getUserInformation(int uid)
 	{
 		//TODO:
 	}

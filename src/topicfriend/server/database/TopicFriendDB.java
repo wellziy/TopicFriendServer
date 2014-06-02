@@ -1,4 +1,4 @@
-package topicfriendserver.database;
+package topicfriend.server.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

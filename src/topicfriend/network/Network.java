@@ -1,4 +1,4 @@
-package topicfriendserver.network;
+package topicfriend.network;
 
 import java.io.IOException;
 import java.io.InputStream;

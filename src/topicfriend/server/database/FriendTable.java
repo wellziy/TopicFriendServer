@@ -1,4 +1,4 @@
-package topicfriendserver.database;
+package topicfriend.server.database;
 
 //class for operate the table 'friend'
 public class FriendTable 

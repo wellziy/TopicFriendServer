@@ -1,10 +1,12 @@
-package topicfriendserver.database;
+package topicfriend.server.database;
 
 //class for operate the table 'user' in database
 public class UserTable
 {
 	//user id
-	public static final String KEY_UID="uid";
+	public static final String KEY_ID="id";
+	//user sex
+	public static final String KEY_SEX="sex";
 	//user name
 	public static final String KEY_NAME="name";
 	//user password

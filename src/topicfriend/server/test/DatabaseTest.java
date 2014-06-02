@@ -1,6 +1,6 @@
-package topicfriendserver.test;
+package topicfriend.server.test;
 
-import topicfriendserver.database.TopicFriendDB;
+import topicfriend.server.database.TopicFriendDB;
 import junit.framework.TestCase;
 
 public class DatabaseTest extends TestCase

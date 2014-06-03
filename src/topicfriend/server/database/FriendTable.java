@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 
 import topicfriend.server.Util;
 
@@ -19,8 +19,10 @@ public class FriendTable
 	public static final String KEY_FID="fid";
 	
 	//@return all friend uid for the user with uid
-	public static boolean getFriendList(int uid)
+	public static ArrayList<Integer> getFriendList(int uid)
 	{
+		ArrayList<Integer> friendList=new ArrayList<>();
+		
 		try
 		{
 			Connection dbConn=TopicFriendDB.getInstance().getConnection();
@@ -30,19 +32,20 @@ public class FriendTable
 			while(selectRes.next())
 			{
 				int fid=selectRes.getInt(KEY_FID);
-				System.out.println(fid);
+
+				friendList.add(fid);
 			}
 			selectRes.close();
 			
 			selectStmt.close();
 			dbConn.commit();
-			return true;
+			return friendList;
 		} 
 		catch (SQLException e)
 		{
-			e.printStackTrace();
+			Util.printSQLException(e);
 		}
-		return false;
+		return null;
 	}
 	
 	//@return if update db succeed,return true

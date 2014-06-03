@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import topicfriend.netmessage.data.TopicInfo;
+import topicfriend.server.Util;
 
 public class TopicTable
 {
@@ -15,8 +19,10 @@ public class TopicTable
 	public static final String KEY_DESCRIPTION="description";
 	
 	//@return all topic information
-	public static boolean getAllTopicInformation()
+	public static ArrayList<TopicInfo> getAllTopicInfo()
 	{
+		ArrayList<TopicInfo> topicList=new ArrayList<>();
+		
 		try 
 		{
 			Connection dbConn=TopicFriendDB.getInstance().getConnection();
@@ -24,22 +30,74 @@ public class TopicTable
 			ResultSet selectRes=selectStmt.executeQuery();
 			while(selectRes.next())
 			{
-				//TODO: put the result as return value
 				int id=selectRes.getInt(KEY_ID);
 				String title=selectRes.getString(KEY_TITLE);
 				String description=selectRes.getString(KEY_DESCRIPTION);
-				System.out.println(""+id+","+title+","+description);
+				
+				topicList.add(new TopicInfo(id, title, description));
 			}
 			selectRes.close();
 			
 			selectStmt.close();
-			dbConn.close();
-			return true;
+			dbConn.commit();
+			return topicList;
 		} 
 		catch (SQLException e)
 		{
-			e.printStackTrace();
+			Util.printSQLException(e);
 		}
+		
+		return null;
+	}
+	
+	public static int createTopic(String title,String description)
+	{
+		try 
+		{
+			Connection dbConn=TopicFriendDB.getInstance().getConnection();
+			PreparedStatement insertStmt=dbConn.prepareStatement("insert into topic(title,description) values(?,?)", new int[]{1});
+			insertStmt.setString(1, title);
+			insertStmt.setString(2, description);
+			insertStmt.executeUpdate();
+			
+			ResultSet genKeys = insertStmt.getGeneratedKeys();
+			int topicID=-1;
+			if(genKeys.next())
+			{
+				topicID=genKeys.getInt(1);
+			}
+			genKeys.close();
+			
+			insertStmt.close();
+			dbConn.commit();
+			return topicID;
+		}
+		catch (SQLException e) 
+		{
+			Util.printSQLException(e);
+		}
+		
+		return -1;
+	}
+	
+	public static boolean removeTopic(int id)
+	{
+		try 
+		{
+			Connection dbConn=TopicFriendDB.getInstance().getConnection();
+			PreparedStatement deleteStmt=dbConn.prepareStatement("delete from topic where id=?");
+			deleteStmt.setInt(1, id);
+			deleteStmt.executeUpdate();
+			
+			deleteStmt.close();
+			dbConn.commit();
+			return true;
+		}
+		catch (SQLException e) 
+		{
+			Util.printSQLException(e);
+		}
+		
 		return false;
 	}
 }

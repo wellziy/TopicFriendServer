@@ -1,13 +1,13 @@
 package topicfriend.netmessage;
 
-public class NetMessageRigister extends NetMessage
+public class NetMessageRegister extends NetMessage
 {
 	private String m_userName;
 	private String m_password;
 	
-	public NetMessageRigister(String userName,String password)
+	public NetMessageRegister(String userName,String password)
 	{
-		setMessageID(NetMessageID.RIGISTER);
+		setMessageID(NetMessageID.REGISTER);
 		
 		m_userName=userName;
 		m_password=password;

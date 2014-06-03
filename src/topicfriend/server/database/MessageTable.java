@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
+import topicfriend.netmessage.data.MessageInfo;
 import topicfriend.server.Util;
 
 
@@ -24,8 +26,10 @@ public class MessageTable
 	public static final String KEY_CONTENT="content";
 	
 	//@return all unread message for user with uid,and then remove them from database
-	public static boolean getUnreadMessage(int uid)
+	public static ArrayList<MessageInfo> getUnreadMessage(int uid)
 	{
+		ArrayList<MessageInfo> messageList=new ArrayList<>();
+		
 		try
 		{
 			Connection dbConn=TopicFriendDB.getInstance().getConnection();
@@ -39,8 +43,8 @@ public class MessageTable
 				int sid=selectRes.getInt("sid");
 				Timestamp ts=selectRes.getTimestamp("ts");
 				String content=selectRes.getString("content");
-				//TODO: save them as return value
-				System.out.println(sid+","+ts+","+content);
+				
+				messageList.add(new MessageInfo(sid,uid,ts,content));
 			}
 			//close the result set if no use it any more
 			selectRes.close();
@@ -54,13 +58,13 @@ public class MessageTable
 			selectSt.close();
 			deleteSt.close();
 			dbConn.commit();
-			return true;
+			return messageList;
 		} 
 		catch (SQLException e) 
 		{
 			Util.printSQLException(e);
 		}
-		return false;
+		return null;
 	}
 	
 	public static boolean putUnreadMessage(int sid,int tid,Timestamp ts,String content)

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 import topicfriend.netmessage.data.MessageInfo;
 import topicfriend.netmessage.data.TopicInfo;
-import topicfriend.netmessage.data.UsrInfo;
+import topicfriend.netmessage.data.UserInfo;
 import topicfriend.server.database.FriendTable;
 import topicfriend.server.database.MessageTable;
 import topicfriend.server.database.TopicFriendDB;
@@ -32,7 +32,7 @@ public class DatabaseTest extends TestCase
 		System.out.println("--end messageList");
 	}
 	
-	public void printUsrInfo(UsrInfo info)
+	public void printUsrInfo(UserInfo info)
 	{
 		System.out.println("--begin user info");
 		int id=info.getID();
@@ -98,13 +98,17 @@ public class DatabaseTest extends TestCase
 		System.out.println("createUID="+createUID);
 		assertTrue(createUID>=0);
 		
+		//test update user info
+		boolean isUpdateSucceed=UsrTable.updateUserInfo(createUID, UserInfo.SEX_MALE, "changed_name", "changed_sig", "changed_icon");
+		assertTrue(isUpdateSucceed);
+		
 		//test get user info by id
 		UsrTable.getUserInfoWithID(1);
-		UsrInfo info=UsrTable.getUserInfoWithID(createUID);
+		UserInfo info=UsrTable.getUserInfoWithID(createUID);
 		printUsrInfo(info);
 		
 		//test get user info by name
-		UsrInfo info2 = UsrTable.getUserInfoWithName("wellziy");
+		UserInfo info2 = UsrTable.getUserInfoWithName("wellziy");
 		if(info2!=null)
 		{
 			printUsrInfo(info2);

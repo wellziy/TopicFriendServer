@@ -1,6 +1,6 @@
 package topicfriend.netmessage.data;
 
-public class UsrInfo 
+public class UserInfo 
 {
 	public static final int SEX_MALE=0;
 	public static final int SEX_FEMALE=1;
@@ -13,7 +13,7 @@ public class UsrInfo
 	
 	//////////////////////////////////
 	//public
-	public UsrInfo(int id,int sex,String name,String sig,String icon)
+	public UserInfo(int id,int sex,String name,String sig,String icon)
 	{
 		m_id=id;
 		m_sex=sex;

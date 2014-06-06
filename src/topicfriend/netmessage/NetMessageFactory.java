@@ -16,6 +16,11 @@ public class NetMessageFactory
 		f.addNetMessageClass(NetMessageID.LOGIN, NetMessageLogin.class);
 		f.addNetMessageClass(NetMessageID.ERROR, NetMessageError.class);
 		f.addNetMessageClass(NetMessageID.REGISTER, NetMessageRegister.class);
+		f.addNetMessageClass(NetMessageID.LOGIN_SUCCEED, NetMessageLoginSucceed.class);
+		f.addNetMessageClass(NetMessageID.CHAT_ROOM, NetMessageChatRoom.class);
+		f.addNetMessageClass(NetMessageID.CHAT_FRIEND, NetMessageChatFriend.class);
+		f.addNetMessageClass(NetMessageID.UPDATE_USER_INFO, NetMessageUpdateUserInfo.class);
+		f.addNetMessageClass(NetMessageID.UPDATE_USER_INFO_SUCCEED, NetMessageUpdateUserInfoSucceed.class);
 	}
 	
 	//public interfaces

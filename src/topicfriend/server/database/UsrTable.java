@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import topicfriend.netmessage.data.UsrInfo;
+import topicfriend.netmessage.data.UserInfo;
 import topicfriend.server.Util;
 
 //class for operate the table 'user' in database
@@ -87,7 +87,7 @@ public class UsrTable
 	}
 	
 	//@return the name,sig,icon information for user with uid
-	public static UsrInfo getUserInfoWithID(int uid)
+	public static UserInfo getUserInfoWithID(int uid)
 	{
 		try
 		{
@@ -95,14 +95,14 @@ public class UsrTable
 			PreparedStatement selectStmt=dbConn.prepareStatement("select sex,name,sig,icon from usr where id=?");
 			selectStmt.setInt(1, uid);
 			ResultSet selectRes=selectStmt.executeQuery();
-			UsrInfo info=null;
+			UserInfo info=null;
 			if(selectRes.next())
 			{
 				int sex=selectRes.getInt("sex");
 				String name=selectRes.getString("name");
 				String sig=selectRes.getString("sig");
 				String icon=selectRes.getString("icon");
-				info=new UsrInfo(uid,sex,name,sig,icon);
+				info=new UserInfo(uid,sex,name,sig,icon);
 			}
 			selectRes.close();
 			
@@ -117,7 +117,7 @@ public class UsrTable
 		return null;
 	}
 	
-	public static UsrInfo getUserInfoWithName(String name)
+	public static UserInfo getUserInfoWithName(String name)
 	{
 		try
 		{
@@ -125,14 +125,14 @@ public class UsrTable
 			PreparedStatement selectStmt=dbConn.prepareStatement("select id,sex,sig,icon from usr where name=?");
 			selectStmt.setString(1,name);
 			ResultSet selectRes=selectStmt.executeQuery();
-			UsrInfo info=null;
+			UserInfo info=null;
 			if(selectRes.next())
 			{
 				int uid=selectRes.getInt("id");
 				int sex=selectRes.getInt("sex");
 				String sig=selectRes.getString("sig");
 				String icon=selectRes.getString("icon");
-				info=new UsrInfo(uid,sex,name,sig,icon);
+				info=new UserInfo(uid,sex,name,sig,icon);
 			}
 			selectRes.close();
 			
@@ -174,5 +174,31 @@ public class UsrTable
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	public static boolean updateUserInfo(int uid,int sex,String name,String signature,String icon)
+	{
+		try
+		{
+			Connection dbConn=TopicFriendDB.getInstance().getConnection();
+			PreparedStatement updateStmt=dbConn.prepareStatement("update usr set sex=?,name=?,sig=?,icon=? where id=?");
+			updateStmt.setInt(1, sex);
+			updateStmt.setString(2, name);
+			updateStmt.setString(3, signature);
+			updateStmt.setString(4, icon);
+			updateStmt.setInt(5, uid);
+			
+			updateStmt.executeUpdate();
+			
+			updateStmt.close();
+			dbConn.commit();
+			return true;
+		}
+		catch (SQLException e)
+		{
+			Util.printSQLException(e);
+		}
+		
+		return false;
 	}
 }

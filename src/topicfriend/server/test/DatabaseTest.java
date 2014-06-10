@@ -123,8 +123,20 @@ public class DatabaseTest extends TestCase
 		boolean make01=FriendTable.makeFriend(0, 1);
 		assertTrue(make01);
 		
+		if(make01)
+		{
+			boolean check01=FriendTable.isFriend(0, 1);
+			assertTrue(check01);
+		}
+
 		boolean make02=FriendTable.makeFriend(0, 2);
 		assertTrue(make02);
+		
+		if(make02)
+		{
+			boolean check02=FriendTable.isFriend(0, 2);
+			assertTrue(check02);
+		}
 		
 		ArrayList<Integer> friendList = FriendTable.getFriendList(0);
 		printFriendList(friendList);

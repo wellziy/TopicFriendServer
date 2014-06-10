@@ -21,6 +21,11 @@ public class NetMessageFactory
 		f.addNetMessageClass(NetMessageID.CHAT_FRIEND, NetMessageChatFriend.class);
 		f.addNetMessageClass(NetMessageID.UPDATE_USER_INFO, NetMessageUpdateUserInfo.class);
 		f.addNetMessageClass(NetMessageID.UPDATE_USER_INFO_SUCCEED, NetMessageUpdateUserInfoSucceed.class);
+		f.addNetMessageClass(NetMessageID.LIKE, NetMessageLike.class);
+		f.addNetMessageClass(NetMessageID.NEW_FRIEND, NetMessageNewFriend.class);
+		f.addNetMessageClass(NetMessageID.JOIN_TOPIC, NetMessageJoinTopic.class);
+		f.addNetMessageClass(NetMessageID.MATCH_SUCCEED, NetMessageMatchSucceed.class);
+		f.addNetMessageClass(NetMessageID.LEAVE_ROOM, NetMessageLeaveRoom.class);
 	}
 	
 	//public interfaces

@@ -12,6 +12,11 @@ public class NetMessageID
 	public static final int CHAT_FRIEND=6;
 	public static final int UPDATE_USER_INFO=7;
 	public static final int UPDATE_USER_INFO_SUCCEED=8;
+	public static final int LIKE=9;
+	public static final int NEW_FRIEND=10;
+	public static final int JOIN_TOPIC=11;
+	public static final int MATCH_SUCCEED=13;
+	public static final int LEAVE_ROOM=14;
 	//TODO: add more message id here
 	//NOTICE: remember register the id in the factory and set the id in NetMessage constructor
 }

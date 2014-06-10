@@ -101,4 +101,32 @@ public class FriendTable
 
 		return false;
 	}
+	
+	public static boolean isFriend(int uid1,int uid2)
+	{
+		try
+		{
+			Connection dbConn=TopicFriendDB.getInstance().getConnection();
+			PreparedStatement selectStmt = dbConn.prepareStatement("select id from friend where mid=? and fid=?");
+			selectStmt.setInt(1, uid1);
+			selectStmt.setInt(2, uid2);
+			ResultSet selectRes = selectStmt.executeQuery();
+			boolean res=false;
+			if(selectRes.next())
+			{
+				res=true;
+			}
+			selectRes.close();
+			
+			selectStmt.close();
+			dbConn.commit();
+			return res;
+		} 
+		catch (SQLException e)
+		{
+			Util.printSQLException(e);
+		}
+		
+		return false;
+	}
 }

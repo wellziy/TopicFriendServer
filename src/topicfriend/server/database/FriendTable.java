@@ -21,7 +21,7 @@ public class FriendTable
 	//@return all friend uid for the user with uid
 	public static ArrayList<Integer> getFriendList(int uid)
 	{
-		ArrayList<Integer> friendList=new ArrayList<>();
+		ArrayList<Integer> friendList=new ArrayList<Integer>();
 		
 		try
 		{

@@ -3,7 +3,6 @@ package topicfriend.server.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class TopicFriendDB
 {
@@ -22,8 +21,7 @@ public class TopicFriendDB
 			{
 				s_instance.initDB();
 			} 
-			catch (InstantiationException | IllegalAccessException
-					| ClassNotFoundException | SQLException e) 
+			catch(Exception e)
 			{
 				e.printStackTrace();
 				s_instance=null;

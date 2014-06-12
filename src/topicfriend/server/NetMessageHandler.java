@@ -46,11 +46,11 @@ public class NetMessageHandler
 	
 	public NetMessageHandler()
 	{
-		m_unloginConnections=new HashSet<>();
-		m_loginConnectionMap=new HashMap<>();
-		m_loginUidMap=new HashMap<>();
-		m_unmatchTopicIDMap=new HashMap<>();
-		m_matchedRooms=new HashSet<>();
+		m_unloginConnections=new HashSet<Integer>();
+		m_loginConnectionMap=new HashMap<Integer, OnlineUser>();
+		m_loginUidMap=new HashMap<Integer, OnlineUser>();
+		m_unmatchTopicIDMap=new HashMap<Integer, TopicRoom>();
+		m_matchedRooms=new HashSet<TopicRoom>();
 		
 		//TODO:
 		//load the topic from database

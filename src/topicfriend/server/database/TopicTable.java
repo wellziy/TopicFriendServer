@@ -21,7 +21,7 @@ public class TopicTable
 	//@return all topic information
 	public static ArrayList<TopicInfo> getAllTopicInfo()
 	{
-		ArrayList<TopicInfo> topicList=new ArrayList<>();
+		ArrayList<TopicInfo> topicList=new ArrayList<TopicInfo>();
 		
 		try 
 		{

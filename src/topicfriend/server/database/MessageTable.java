@@ -28,7 +28,7 @@ public class MessageTable
 	//@return all unread message for user with uid,and then remove them from database
 	public static ArrayList<MessageInfo> getUnreadMessage(int uid)
 	{
-		ArrayList<MessageInfo> messageList=new ArrayList<>();
+		ArrayList<MessageInfo> messageList=new ArrayList<MessageInfo>();
 		
 		try
 		{
